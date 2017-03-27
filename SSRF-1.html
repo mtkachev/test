@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" /> 
+    <title>some title</title>
+    
+    <!-- it supports IE 7-->
+<!--    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>-->
+    <script type="text/javascript">
+
+        function get_browser() {
+            var ua = navigator.userAgent, tem, M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+            if (/trident/i.test(M[1])) {
+                tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
+                return { name: 'IE', version: (tem[1] || '') };
+            }
+            if (M[1] === 'Chrome') {
+                tem = ua.match(/\bOPR|Edge\/(\d+)/)
+                if (tem != null) { return { name: 'Opera', version: tem[1] }; }
+            }
+            M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
+            if ((tem = ua.match(/version\/(\d+)/i)) != null) { M.splice(1, 1, tem[1]); }
+            return {
+                name: M[0],
+                version: M[1]
+            };
+        }
+        
+        function processJSON(jsonData) {
+            if (jsonData) {
+                document.getElementById("jsonpResult").innerText = "jsonp result sucessfully loaded from thirdparty service";
+            }
+        }
+
+
+        function reqListener(test) {
+            document.getElementById("getResult").innerText = test.target.responseText;
+        }
+
+//        $(document).ready(function () {
+
+
+            // doesn't work in latest chrome, but successfully works in IE            
+//            $.get("http://localhost:3000/",
+//                function(data) {
+//                    $("#getResult").text(data);
+//                });
+
+//            var flickerApi = "http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?";
+//            $.getJSON(flickerApi,
+//                {
+//                    tags: "mount rainier",
+//                    tagmode: "any",
+//                    format: "json"
+//                })
+//                .done(function (data) {
+//                    if (data)
+//                        $("#jsonpResult").text("jsonp result sucessfully loaded from thirdparty service");
+//                });
+//        });
+
+
+    </script>
+
+</head>
+
+<body>
+	<div>
+		client version full: <span id="clientVesion"></span>
+	</div>
+	<div>
+		client version parsed: <span id="clientVesion2"></span>
+	</div>
+	<div>
+		JSONP result: <span id="jsonpResult"></span>
+	</div>
+	<div>
+		simple GET result from internal resource: <span id="getResult"></span>
+	</div>
+	<div>
+		simple GET result from internal resource: <span id="getResult2"></span>
+	</div>
+    
+<script type="text/javascript">
+    
+
+    document.getElementById("clientVesion").innerText = navigator.userAgent;
+    var browserVersion = get_browser();
+    document.getElementById("clientVesion2").innerText = "name: " + browserVersion.name + "; version: " + browserVersion.version;
+
+    script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=processJSON&tags=monkey&tagmode=any&format=json";
+    document.getElementsByTagName('head')[0].appendChild(script);
+
+    var oReq = new XMLHttpRequest();
+//    if ("addEventListener" in oReq)
+//        oReq.addEventListener("load", reqListener);
+//    else if ("onreadystatechange" in oReq)
+    oReq.onreadystatechange = function() {
+        if (oReq.readyState === 4) {
+            document.getElementById("getResult").innerText = oReq.responseText;
+        }
+    }
+    oReq.open("GET", "http://localhost:3000/test1?temp=" + new Date().getTime());
+    oReq.send();
+
+    var oReq2 = new XMLHttpRequest();
+    oReq2.onreadystatechange = function() {
+        if (oReq2.readyState === 4) {
+            document.getElementById("getResult2").innerText = oReq2.responseText;
+        }
+    }
+    oReq2.open("POST", "http://localhost:3000/test1?temp=" + new Date().getTime());
+    oReq2.send();
+
+//    var oReq3 = new XMLHttpRequest();
+//    oReq3.onreadystatechange = function() {
+//        if (oReq3.readyState === 4) {
+//            document.getElementById("getResult2").innerText = oReq3.responseText;
+//        }
+//    }
+//    oReq3.open("GET", "https://win-qa0vv7gr0mn/ews/Services.wsdl");
+//    oReq3.send();
+</script>
+
+</body>
+
+</html>
