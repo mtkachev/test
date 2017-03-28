@@ -111,7 +111,7 @@
             document.getElementById("getResult2").innerText = oReq2.responseText;
         }
     }
-    oReq2.open("POST", "http://localhost:3000/test1?temp=" + new Date().getTime());
+    oReq2.open("POST", "http://localhost/web2/AutoComplete/TestPost?argument1=sdfsdf&t=" + new Date().getTime());
     oReq2.send();
 
 //    var oReq3 = new XMLHttpRequest();
